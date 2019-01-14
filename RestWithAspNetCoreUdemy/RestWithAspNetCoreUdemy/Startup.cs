@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using RestWithAspNetCoreUdemy.Services;
+using RestWithAspNetCoreUdemy.Services.Implementattions;
 
 namespace RestWithAspNetCoreUdemy
 {
@@ -26,6 +28,7 @@ namespace RestWithAspNetCoreUdemy
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddSingleton<IPersonService, PersonServiceImp>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
