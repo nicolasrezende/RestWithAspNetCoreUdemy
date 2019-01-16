@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using RestWithAspNetCoreUdemy.Models.Context;
 using RestWithAspNetCoreUdemy.Services;
 using RestWithAspNetCoreUdemy.Services.Implementattions;
 
@@ -27,8 +29,12 @@ namespace RestWithAspNetCoreUdemy
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<MysqlContext>(context => 
+                context.UseMySql(Configuration.GetConnectionString("MySqlConnectionString")));
+
+            services.AddScoped<IPersonService, PersonServiceImp>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddSingleton<IPersonService, PersonServiceImp>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

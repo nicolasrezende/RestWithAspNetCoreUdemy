@@ -1,69 +1,77 @@
 ﻿using RestWithAspNetCoreUdemy.Models;
+using RestWithAspNetCoreUdemy.Models.Context;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 namespace RestWithAspNetCoreUdemy.Services.Implementattions
 {
     public class PersonServiceImp : IPersonService
-    {
-        private volatile int _count;
-        private List<Person> _persons;
+    { 
+        private readonly MysqlContext _context;
 
-        public PersonServiceImp()
+        public PersonServiceImp(MysqlContext context)
         {
-            _persons = new List<Person>();
-
-            for (int i = 0; i < 8; i++)
-            {
-                _persons.Add(MockPerson(i));
-            }
-        }
-
-        private Person MockPerson(int i)
-        {
-            return new Person
-            {
-                Id = IncrementAndGet(),
-                FirstName = "First Name " + i,
-                LastName = "Last Name " + i,
-                Address = "Address " + i,
-                Gender = "Male"
-            };
-        }
-
-        private long IncrementAndGet()
-        {
-            return Interlocked.Increment(ref _count);
+            _context = context;
         }
 
         public Person Create(Person person)
         {
-            _persons.Add(person);
+            try
+            {
+                _context.Persons.Add(person);
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
             return person;
         }
 
         public Person Update(Person person)
         {
-            Delete(person.Id);
-            Create(person);
-            return person;
+            var result = FindById(person.Id);
+            try
+            {
+                if (result != null)
+                {
+                    _context.Entry(result).CurrentValues.SetValues(person);
+                    _context.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return result;
         }
 
         public void Delete(long id)
         {
-            var person = FindById(id);
-            _persons.Remove(person);
+            var result = FindById(id);
+            try
+            {
+                if (result != null)
+                {
+                    _context.Persons.Remove(result);
+                    _context.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public Person FindById(long id)
         {
-            return _persons.Where(p => p.Id == id).FirstOrDefault();
+            return _context.Persons.Find(id);
         }
 
         public List<Person> FindAll()
         {
-            return _persons;
+            return _context.Persons.ToList();
         }
     }
 }
