@@ -1,21 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using RestWithAspNetCoreUdemy.Bussines;
+using RestWithAspNetCoreUdemy.Bussines.Implementattions;
 using RestWithAspNetCoreUdemy.Models.Context;
-using RestWithAspNetCoreUdemy.Services;
-using RestWithAspNetCoreUdemy.Services.Implementattions;
+using RestWithAspNetCoreUdemy.Repository;
+using RestWithAspNetCoreUdemy.Repository.Implementattions;
 
 namespace RestWithAspNetCoreUdemy
 {
@@ -34,7 +27,8 @@ namespace RestWithAspNetCoreUdemy
             services.AddDbContext<MysqlContext>(context => 
                 context.UseMySql(Configuration.GetConnectionString("MySqlConnectionString")));
 
-            services.AddScoped<IPersonService, PersonServiceImp>();
+            services.AddScoped<IPersonRepository, PersonRepositoryImp>();
+            services.AddScoped<IPersonBussines, PersonBussinesImp>();
 
             services.AddApiVersioning(options => options.ReportApiVersions = true);
 

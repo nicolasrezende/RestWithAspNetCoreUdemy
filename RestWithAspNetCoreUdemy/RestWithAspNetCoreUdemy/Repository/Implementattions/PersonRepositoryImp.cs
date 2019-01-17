@@ -4,13 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RestWithAspNetCoreUdemy.Services.Implementattions
+namespace RestWithAspNetCoreUdemy.Repository.Implementattions
 {
-    public class PersonServiceImp : IPersonService
+    public class PersonRepositoryImp : IPersonRepository
     { 
         private readonly MysqlContext _context;
 
-        public PersonServiceImp(MysqlContext context)
+        public PersonRepositoryImp(MysqlContext context)
         {
             _context = context;
         }

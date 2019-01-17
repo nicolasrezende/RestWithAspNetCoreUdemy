@@ -1,37 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using RestWithAspNetCoreUdemy.Bussines;
 using RestWithAspNetCoreUdemy.Models;
-using RestWithAspNetCoreUdemy.Services;
 
-namespace RestWithAspNetCoreUdemy.Controllers
+namespace RestWithAspNetCoreUdemy.Repository
 {
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class PersonsController : ControllerBase
     {
-        private readonly IPersonService _personService;
+        private readonly IPersonBussines _personBussines;
 
-        public PersonsController(IPersonService personService)
+        public PersonsController(IPersonBussines personBussines)
         {
-            _personService = personService;
+            _personBussines = personBussines;
         }
 
         // GET api/persons
         [HttpGet]
         public ActionResult Get()
         {
-            return Ok(_personService.FindAll());
+            return Ok(_personBussines.FindAll());
         }
 
         // GET api/persons/5
         [HttpGet("{id}")]
         public ActionResult Get(int id)
         {
-            Person person = _personService.FindById(id);
+            Person person = _personBussines.FindById(id);
             if (person == null) return NotFound();
             return Ok(person);
         }
@@ -41,7 +37,7 @@ namespace RestWithAspNetCoreUdemy.Controllers
         public ActionResult Post([FromBody] Person person)
         {
             if (person == null) BadRequest();
-            return Ok(_personService.Create(person));
+            return Ok(_personBussines.Create(person));
         }
 
         // PUT api/persons/5
@@ -49,14 +45,14 @@ namespace RestWithAspNetCoreUdemy.Controllers
         public ActionResult Put([FromBody] Person person)
         {
             if (person == null) BadRequest();
-            return Ok(_personService.Update(person));
+            return Ok(_personBussines.Update(person));
         }
 
         // DELETE api/persons/5
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
-            _personService.Delete(id);
+            _personBussines.Delete(id);
             return NoContent();
         }
     }

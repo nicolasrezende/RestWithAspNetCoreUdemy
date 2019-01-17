@@ -1,9 +1,9 @@
 ﻿using RestWithAspNetCoreUdemy.Models;
 using System.Collections.Generic;
 
-namespace RestWithAspNetCoreUdemy.Services
+namespace RestWithAspNetCoreUdemy.Bussines
 {
-    public interface IPersonService
+    public interface IPersonBussines
     {
         Person Create(Person person);
         Person Update(Person person);
