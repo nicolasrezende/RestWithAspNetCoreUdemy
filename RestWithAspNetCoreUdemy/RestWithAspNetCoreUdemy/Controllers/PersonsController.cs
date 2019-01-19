@@ -45,7 +45,9 @@ namespace RestWithAspNetCoreUdemy.Repository
         public ActionResult Put([FromBody] Person person)
         {
             if (person == null) BadRequest();
-            return Ok(_personBussines.Update(person));
+            var personUpdate = _personBussines.Update(person);
+            if (personUpdate == null) BadRequest();
+            return Ok(personUpdate);
         }
 
         // DELETE api/persons/5

@@ -4,28 +4,47 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using RestWithAspNetCoreUdemy.Bussines;
 using RestWithAspNetCoreUdemy.Bussines.Implementattions;
 using RestWithAspNetCoreUdemy.Models.Context;
 using RestWithAspNetCoreUdemy.Repository;
 using RestWithAspNetCoreUdemy.Repository.Implementattions;
+using System.Collections.Generic;
 
 namespace RestWithAspNetCoreUdemy
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public IConfiguration Configuration { get; }
+        public IHostingEnvironment HostingEnvironment { get; }
+        public ILogger<Startup> Logger { get; }
+
+        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment, ILogger<Startup> logger)
         {
             Configuration = configuration;
+            HostingEnvironment = hostingEnvironment;
+            Logger = logger;
         }
-
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<MysqlContext>(context => 
-                context.UseMySql(Configuration.GetConnectionString("MySqlConnectionString")));
+            string connectionString = Configuration.GetConnectionString("MySqlConnectionString"); 
+            services.AddDbContext<MysqlContext>(context => context.UseMySql(connectionString));
+
+            if (HostingEnvironment.IsDevelopment())
+            {
+                var evolveConnection = new MySql.Data.MySqlClient.MySqlConnection(connectionString);
+
+                var evolve = new Evolve.Evolve(evolveConnection, msg => Logger.LogInformation(msg))
+                {
+                    Locations = new List<string> { "Db/migrations" },
+                    IsEraseDisabled = true
+                };
+
+                evolve.Migrate();
+            }
 
             services.AddScoped<IPersonRepository, PersonRepositoryImp>();
             services.AddScoped<IPersonBussines, PersonBussinesImp>();
