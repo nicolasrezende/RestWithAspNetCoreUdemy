@@ -1,14 +1,15 @@
-﻿using RestWithAspNetCoreUdemy.Models;
+﻿using RestWithAspNetCoreUdemy.Data.VO;
+using RestWithAspNetCoreUdemy.Models;
 using System.Collections.Generic;
 
 namespace RestWithAspNetCoreUdemy.Bussines
 {
     public interface IBookBussines
     {
-        Book Create(Book book);
-        Book FindById(long id);
-        List<Book> FindAll();
-        Book Update(Book book);
+        BookVO Create(BookVO book);
+        BookVO FindById(long id);
+        List<BookVO> FindAll();
+        BookVO Update(BookVO book);
         void Delete(long id);
     }
 }

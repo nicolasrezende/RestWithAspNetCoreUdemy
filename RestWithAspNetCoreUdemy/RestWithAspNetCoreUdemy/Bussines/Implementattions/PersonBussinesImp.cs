@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using RestWithAspNetCoreUdemy.Data.Converters;
+using RestWithAspNetCoreUdemy.Data.VO;
 using RestWithAspNetCoreUdemy.Models;
 using RestWithAspNetCoreUdemy.Repository.Generic;
 
@@ -6,16 +8,20 @@ namespace RestWithAspNetCoreUdemy.Bussines.Implementattions
 {
     public class PersonBussinesImp : IPersonBussines
     {
-        private IRepository<Person> _repository;
+        private readonly IRepository<Person> _repository;
+        private readonly PersonConverter _personConverter; 
 
         public PersonBussinesImp(IRepository<Person> repository)
         {
             _repository = repository;
+            _personConverter = new PersonConverter();
         }
 
-        public Person Create(Person person)
+        public PersonVO Create(PersonVO person)
         {
-            return _repository.Create(person);
+            var personEntity = _personConverter.Parse(person);
+            personEntity = _repository.Create(personEntity);
+            return _personConverter.Parse(personEntity);
         }
 
         public void Delete(long id)
@@ -23,19 +29,21 @@ namespace RestWithAspNetCoreUdemy.Bussines.Implementattions
             _repository.Delete(id);
         }
 
-        public List<Person> FindAll()
+        public List<PersonVO> FindAll()
         {
-            return _repository.FindAll();
+            return _personConverter.ParseList(_repository.FindAll());
         }
 
-        public Person FindById(long id)
+        public PersonVO FindById(long id)
         {
-            return _repository.FindById(id);
+            return _personConverter.Parse(_repository.FindById(id));
         }
 
-        public Person Update(Person person)
+        public PersonVO Update(PersonVO person)
         {
-            return _repository.Update(person);
+            var personEntity = _personConverter.Parse(person);
+            personEntity = _repository.Update(personEntity);
+            return _personConverter.Parse(personEntity);
         }
     }
 }

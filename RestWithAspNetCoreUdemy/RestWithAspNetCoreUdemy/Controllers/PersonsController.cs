@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RestWithAspNetCoreUdemy.Bussines;
-using RestWithAspNetCoreUdemy.Models;
+using RestWithAspNetCoreUdemy.Data.VO;
 
 namespace RestWithAspNetCoreUdemy.Repository
 {
@@ -27,14 +27,14 @@ namespace RestWithAspNetCoreUdemy.Repository
         [HttpGet("{id}")]
         public ActionResult Get(int id)
         {
-            Person person = _personBussines.FindById(id);
+            PersonVO person = _personBussines.FindById(id);
             if (person == null) return NotFound();
             return Ok(person);
         }
 
         // POST api/persons
         [HttpPost]
-        public ActionResult Post([FromBody] Person person)
+        public ActionResult Post([FromBody] PersonVO person)
         {
             if (person == null) BadRequest();
             return Ok(_personBussines.Create(person));
@@ -42,7 +42,7 @@ namespace RestWithAspNetCoreUdemy.Repository
 
         // PUT api/persons/5
         [HttpPut()]
-        public ActionResult Put([FromBody] Person person)
+        public ActionResult Put([FromBody] PersonVO person)
         {
             if (person == null) BadRequest();
             var personUpdate = _personBussines.Update(person);

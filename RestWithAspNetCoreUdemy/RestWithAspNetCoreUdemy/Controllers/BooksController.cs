@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RestWithAspNetCoreUdemy.Bussines;
-using RestWithAspNetCoreUdemy.Models;
+using RestWithAspNetCoreUdemy.Data.VO;
 
 namespace RestWithAspNetCoreUdemy.Controllers
 {
@@ -27,26 +27,26 @@ namespace RestWithAspNetCoreUdemy.Controllers
         [HttpGet("{id}")]
         public ActionResult Get(int id)
         {
-            Book book = _booksBussines.FindById(id);
+            BookVO book = _booksBussines.FindById(id);
             if (book == null) return NotFound();
             return Ok(book);
         }
 
         // POST api/books
         [HttpPost]
-        public ActionResult Post([FromBody] Book book)
+        public ActionResult Post([FromBody] BookVO book)
         {
-            if (book == null) BadRequest();
+            if (book == null) return BadRequest();
             return Ok(_booksBussines.Create(book));
         }
 
         // PUT api/books/5
         [HttpPut()]
-        public ActionResult Put([FromBody] Book book)
+        public ActionResult Put([FromBody] BookVO book)
         {
-            if (book == null) BadRequest();
+            if (book == null) return BadRequest();
             var bookUpdate = _booksBussines.Update(book);
-            if (bookUpdate == null) BadRequest();
+            if (bookUpdate == null) return BadRequest();
             return Ok(bookUpdate);
         }
 
