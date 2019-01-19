@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using RestWithAspNetCoreUdemy.Models;
-using RestWithAspNetCoreUdemy.Repository;
+using RestWithAspNetCoreUdemy.Repository.Generic;
 
 namespace RestWithAspNetCoreUdemy.Bussines.Implementattions
 {
     public class PersonBussinesImp : IPersonBussines
     {
-        private readonly IPersonRepository _repository;
+        private IRepository<Person> _repository;
 
-        public PersonBussinesImp(IPersonRepository repository)
+        public PersonBussinesImp(IRepository<Person> repository)
         {
             _repository = repository;
         }

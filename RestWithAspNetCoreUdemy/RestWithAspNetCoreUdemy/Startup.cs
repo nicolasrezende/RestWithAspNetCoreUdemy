@@ -9,7 +9,9 @@ using RestWithAspNetCoreUdemy.Bussines;
 using RestWithAspNetCoreUdemy.Bussines.Implementattions;
 using RestWithAspNetCoreUdemy.Models.Context;
 using RestWithAspNetCoreUdemy.Repository;
+using RestWithAspNetCoreUdemy.Repository.Generic;
 using RestWithAspNetCoreUdemy.Repository.Implementattions;
+using System;
 using System.Collections.Generic;
 
 namespace RestWithAspNetCoreUdemy
@@ -33,21 +35,30 @@ namespace RestWithAspNetCoreUdemy
             string connectionString = Configuration.GetConnectionString("MySqlConnectionString"); 
             services.AddDbContext<MysqlContext>(context => context.UseMySql(connectionString));
 
-            if (HostingEnvironment.IsDevelopment())
+            try
             {
-                var evolveConnection = new MySql.Data.MySqlClient.MySqlConnection(connectionString);
-
-                var evolve = new Evolve.Evolve(evolveConnection, msg => Logger.LogInformation(msg))
+                if (HostingEnvironment.IsDevelopment())
                 {
-                    Locations = new List<string> { "Db/migrations" },
-                    IsEraseDisabled = true
-                };
+                    var evolveConnection = new MySql.Data.MySqlClient.MySqlConnection(connectionString);
 
-                evolve.Migrate();
+                    var evolve = new Evolve.Evolve(evolveConnection, msg => Logger.LogInformation(msg))
+                    {
+                        Locations = new List<string> { "Db/migrations" },
+                        IsEraseDisabled = true
+                    };
+
+                    evolve.Migrate();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogCritical("Database Migration Failed", ex);
             }
 
             services.AddScoped<IPersonRepository, PersonRepositoryImp>();
             services.AddScoped<IPersonBussines, PersonBussinesImp>();
+            services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IBookBussines, BookBussinesImp>();
 
             services.AddApiVersioning(options => options.ReportApiVersions = true);
 
