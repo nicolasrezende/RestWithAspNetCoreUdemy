@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,8 +13,10 @@ using RestWithAspNetCoreUdemy.Models.Context;
 using RestWithAspNetCoreUdemy.Repository;
 using RestWithAspNetCoreUdemy.Repository.Generic;
 using RestWithAspNetCoreUdemy.Repository.Implementattions;
+using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
+
 
 namespace RestWithAspNetCoreUdemy
 {
@@ -63,6 +66,15 @@ namespace RestWithAspNetCoreUdemy
 
             services.AddApiVersioning(options => options.ReportApiVersions = true);
 
+            services.AddSwaggerGen(g =>
+            {
+                g.SwaggerDoc("v1", new Info
+                {
+                    Title = "RESTful API With ASP.NET Core 2.2",
+                    Version = "v1"
+                });
+            });
+
             services.AddMvc(options =>
             {
                 options.RespectBrowserAcceptHeader = true;
@@ -85,8 +97,22 @@ namespace RestWithAspNetCoreUdemy
                 app.UseHsts();
             }
 
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1"));
+
+            // Starting our API in Swagger page
+            var option = new RewriteOptions();
+            option.AddRedirect("^$", "swagger");
+            app.UseRewriter(option);
+
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "DefaultApi", 
+                    template: "{controller=Values}/{id?}");
+            });
         }
     }
 }

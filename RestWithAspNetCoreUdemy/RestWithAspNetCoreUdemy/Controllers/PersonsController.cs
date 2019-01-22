@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RestWithAspNetCoreUdemy.Bussines;
 using RestWithAspNetCoreUdemy.Data.VO;
+using System.Collections.Generic;
 
 namespace RestWithAspNetCoreUdemy.Repository
 {
@@ -18,6 +19,9 @@ namespace RestWithAspNetCoreUdemy.Repository
 
         // GET api/persons
         [HttpGet]
+        [ProducesResponseType(200, Type = typeof(List<PersonVO>))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public ActionResult Get()
         {
             return Ok(_personBussines.FindAll());
@@ -25,6 +29,10 @@ namespace RestWithAspNetCoreUdemy.Repository
 
         // GET api/persons/5
         [HttpGet("{id}")]
+        [ProducesResponseType(200, Type = typeof(PersonVO))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]       
         public ActionResult Get(int id)
         {
             PersonVO person = _personBussines.FindById(id);
@@ -34,6 +42,9 @@ namespace RestWithAspNetCoreUdemy.Repository
 
         // POST api/persons
         [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public ActionResult Post([FromBody] PersonVO person)
         {
             if (person == null) BadRequest();
@@ -42,6 +53,9 @@ namespace RestWithAspNetCoreUdemy.Repository
 
         // PUT api/persons/5
         [HttpPut()]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public ActionResult Put([FromBody] PersonVO person)
         {
             if (person == null) BadRequest();
@@ -52,6 +66,9 @@ namespace RestWithAspNetCoreUdemy.Repository
 
         // DELETE api/persons/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public ActionResult Delete(int id)
         {
             _personBussines.Delete(id);

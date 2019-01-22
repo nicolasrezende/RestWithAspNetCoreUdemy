@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RestWithAspNetCoreUdemy.Bussines;
 using RestWithAspNetCoreUdemy.Data.VO;
+using System.Collections.Generic;
 
 namespace RestWithAspNetCoreUdemy.Controllers
 {
@@ -18,6 +19,9 @@ namespace RestWithAspNetCoreUdemy.Controllers
 
         // GET api/books
         [HttpGet]
+        [ProducesResponseType(200, Type = typeof(List<BookVO>))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public ActionResult Get()
         {
             return Ok(_booksBussines.FindAll());
@@ -25,6 +29,10 @@ namespace RestWithAspNetCoreUdemy.Controllers
 
         // GET api/books/5
         [HttpGet("{id}")]
+        [ProducesResponseType(200, Type = typeof(BookVO))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
         public ActionResult Get(int id)
         {
             BookVO book = _booksBussines.FindById(id);
@@ -34,6 +42,9 @@ namespace RestWithAspNetCoreUdemy.Controllers
 
         // POST api/books
         [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public ActionResult Post([FromBody] BookVO book)
         {
             if (book == null) return BadRequest();
@@ -42,6 +53,9 @@ namespace RestWithAspNetCoreUdemy.Controllers
 
         // PUT api/books/5
         [HttpPut()]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public ActionResult Put([FromBody] BookVO book)
         {
             if (book == null) return BadRequest();
@@ -52,6 +66,10 @@ namespace RestWithAspNetCoreUdemy.Controllers
 
         // DELETE api/books/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
         public ActionResult Delete(int id)
         {
             _booksBussines.Delete(id);
