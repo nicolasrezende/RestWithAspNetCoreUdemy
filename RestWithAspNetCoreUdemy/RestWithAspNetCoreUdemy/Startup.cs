@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
@@ -6,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using RestWithAspNetCoreUdemy.Bussines;
 using RestWithAspNetCoreUdemy.Bussines.Implementattions;
@@ -13,6 +16,7 @@ using RestWithAspNetCoreUdemy.Models.Context;
 using RestWithAspNetCoreUdemy.Repository;
 using RestWithAspNetCoreUdemy.Repository.Generic;
 using RestWithAspNetCoreUdemy.Repository.Implementattions;
+using RestWithAspNetCoreUdemy.Security.Configuration;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
@@ -36,33 +40,52 @@ namespace RestWithAspNetCoreUdemy
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string connectionString = Configuration.GetConnectionString("MySqlConnectionString"); 
+            string connectionString = Configuration.GetConnectionString("MySqlConnectionString");
             services.AddDbContext<MysqlContext>(context => context.UseMySql(connectionString));
 
-            try
+            ExecuteMigrations(connectionString);
+
+            var signingConfigurations = new SigningConfiguration();
+            services.AddSingleton(signingConfigurations);
+
+            var tokenConfiguration = new TokenConfiguration();
+            new ConfigureFromConfigurationOptions<TokenConfiguration>
+                (Configuration.GetSection("TokenConfigurations"))
+                .Configure(tokenConfiguration);
+            services.AddSingleton(tokenConfiguration);
+
+            services.AddAuthentication(authOptions =>
             {
-                if (HostingEnvironment.IsDevelopment())
-                {
-                    var evolveConnection = new MySql.Data.MySqlClient.MySqlConnection(connectionString);
-
-                    var evolve = new Evolve.Evolve(evolveConnection, msg => Logger.LogInformation(msg))
-                    {
-                        Locations = new List<string> { "Db/migrations" },
-                        IsEraseDisabled = true
-                    };
-
-                    evolve.Migrate();
-                }
-            }
-            catch (Exception ex)
+                authOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                authOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(bearerOptions =>
             {
-                Logger.LogCritical("Database Migration Failed", ex);
-            }
+                var paramsValidation = bearerOptions.TokenValidationParameters;
+                paramsValidation.IssuerSigningKey = signingConfigurations.Key;
+                paramsValidation.ValidIssuer = tokenConfiguration.Issuer;
+                paramsValidation.ValidAudience = tokenConfiguration.Audience;
 
-            services.AddScoped<IPersonRepository, PersonRepositoryImp>();
-            services.AddScoped<IPersonBussines, PersonBussinesImp>();
+                //Valida a assinatura do Token recebido
+                paramsValidation.ValidateIssuerSigningKey = true;
+                //Verifica se um token recebido é válido
+                paramsValidation.ValidateLifetime = true;
+                //Define o tempo de tolerância
+                paramsValidation.ClockSkew = TimeSpan.Zero;
+            });
+
+            services.AddAuthorization(auth =>
+            {
+                auth.AddPolicy("Bearer",
+                    new AuthorizationPolicyBuilder()
+                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                    .RequireAuthenticatedUser().Build());
+            });
+
             services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IUserRepository, UserRepositoryImp>();
+            services.AddScoped<IPersonBussines, PersonBussinesImp>();
             services.AddScoped<IBookBussines, BookBussinesImp>();
+            services.AddScoped<ILoginBussines, LoginBussinesImp>();
 
             services.AddApiVersioning(options => options.ReportApiVersions = true);
 
@@ -113,6 +136,29 @@ namespace RestWithAspNetCoreUdemy
                     name: "DefaultApi", 
                     template: "{controller=Values}/{id?}");
             });
+        }
+
+        private void ExecuteMigrations(string connectionString)
+        {
+            try
+            {
+                if (HostingEnvironment.IsDevelopment())
+                {
+                    var evolveConnection = new MySql.Data.MySqlClient.MySqlConnection(connectionString);
+
+                    var evolve = new Evolve.Evolve(evolveConnection, msg => Logger.LogInformation(msg))
+                    {
+                        Locations = new List<string> { "Db/migrations" },
+                        IsEraseDisabled = true
+                    };
+
+                    evolve.Migrate();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogCritical("Database Migration Failed", ex);
+            }
         }
     }
 }

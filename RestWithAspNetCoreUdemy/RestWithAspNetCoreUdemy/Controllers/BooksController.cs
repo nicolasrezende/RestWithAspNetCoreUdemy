@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RestWithAspNetCoreUdemy.Bussines;
 using RestWithAspNetCoreUdemy.Data.VO;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace RestWithAspNetCoreUdemy.Controllers
 
         // GET api/books
         [HttpGet]
+        [Authorize("Bearer")]
         [ProducesResponseType(200, Type = typeof(List<BookVO>))]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
@@ -29,6 +31,7 @@ namespace RestWithAspNetCoreUdemy.Controllers
 
         // GET api/books/5
         [HttpGet("{id}")]
+        [Authorize("Bearer")]
         [ProducesResponseType(200, Type = typeof(BookVO))]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
@@ -42,6 +45,7 @@ namespace RestWithAspNetCoreUdemy.Controllers
 
         // POST api/books
         [HttpPost]
+        [Authorize("Bearer")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
@@ -53,6 +57,7 @@ namespace RestWithAspNetCoreUdemy.Controllers
 
         // PUT api/books/5
         [HttpPut()]
+        [Authorize("Bearer")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
@@ -66,6 +71,7 @@ namespace RestWithAspNetCoreUdemy.Controllers
 
         // DELETE api/books/5
         [HttpDelete("{id}")]
+        [Authorize("Bearer")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]

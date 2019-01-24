@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RestWithAspNetCoreUdemy.Bussines;
 using RestWithAspNetCoreUdemy.Data.VO;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace RestWithAspNetCoreUdemy.Repository
 
         // GET api/persons
         [HttpGet]
+        [Authorize("Bearer")]
         [ProducesResponseType(200, Type = typeof(List<PersonVO>))]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
@@ -29,6 +31,7 @@ namespace RestWithAspNetCoreUdemy.Repository
 
         // GET api/persons/5
         [HttpGet("{id}")]
+        [Authorize("Bearer")]
         [ProducesResponseType(200, Type = typeof(PersonVO))]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
@@ -42,6 +45,7 @@ namespace RestWithAspNetCoreUdemy.Repository
 
         // POST api/persons
         [HttpPost]
+        [Authorize("Bearer")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
@@ -53,6 +57,7 @@ namespace RestWithAspNetCoreUdemy.Repository
 
         // PUT api/persons/5
         [HttpPut()]
+        [Authorize("Bearer")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
@@ -66,6 +71,7 @@ namespace RestWithAspNetCoreUdemy.Repository
 
         // DELETE api/persons/5
         [HttpDelete("{id}")]
+        [Authorize("Bearer")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
