@@ -1,4 +1,5 @@
 ﻿using RestWithAspNetCoreUdemy.Data.VO;
+using RestWithAspNetCoreUdemy.DTO;
 using System.Collections.Generic;
 
 namespace RestWithAspNetCoreUdemy.Bussines
@@ -10,5 +11,7 @@ namespace RestWithAspNetCoreUdemy.Bussines
         void Delete(long id);
         PersonVO FindById(long id);
         List<PersonVO> FindAll();
+        List<PersonVO> FindByName(string firstName, string lastName);
+        PagedSearchDTO<PersonVO> FindWithPagedSearch(string name, string sorDirection, int pageSize, int page);
     }
 }

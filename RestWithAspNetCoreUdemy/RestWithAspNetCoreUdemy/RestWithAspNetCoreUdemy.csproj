@@ -6,6 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="HyperMedia\**" />
+    <Content Remove="HyperMedia\**" />
+    <EmbeddedResource Remove="HyperMedia\**" />
+    <None Remove="HyperMedia\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
@@ -19,7 +26,6 @@
     <PackageReference Include="MySql.Data" Version="8.0.13" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.1.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
-    <PackageReference Include="Tapioca.HATEOAS" Version="1.0.4" />
   </ItemGroup>
 
   <ItemGroup>

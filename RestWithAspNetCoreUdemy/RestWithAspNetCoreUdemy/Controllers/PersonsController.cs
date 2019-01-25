@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RestWithAspNetCoreUdemy.Bussines;
 using RestWithAspNetCoreUdemy.Data.VO;
+using RestWithAspNetCoreUdemy.DTO;
 using System.Collections.Generic;
 
 namespace RestWithAspNetCoreUdemy.Repository
@@ -41,6 +42,30 @@ namespace RestWithAspNetCoreUdemy.Repository
             PersonVO person = _personBussines.FindById(id);
             if (person == null) return NotFound();
             return Ok(person);
+        }
+
+        // GET api/persons/find-by-name?firstName=teste&lastName=teste
+        [HttpGet("find-by-name")]
+        [Authorize("Bearer")]
+        [ProducesResponseType(200, Type = typeof(PersonVO))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        public ActionResult FindByName([FromQuery] string firstName, [FromQuery] string lastName)
+        {
+            return Ok(_personBussines.FindByName(firstName, lastName));
+        }
+
+        // GET api/persons/find-with-paged-search/asc/10/1?name=Teste
+        [HttpGet("find-with-paged-search/{sortDirection}/{pageSize}/{page}")]
+        [Authorize("Bearer")]
+        [ProducesResponseType(200, Type = typeof(PagedSearchDTO<PersonVO>))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        public ActionResult FindWithPagedSearch([FromQuery] string name, string sortDirection, int pageSize, int page)
+        {
+            return Ok(_personBussines.FindWithPagedSearch(name, sortDirection, pageSize, page));
         }
 
         // POST api/persons

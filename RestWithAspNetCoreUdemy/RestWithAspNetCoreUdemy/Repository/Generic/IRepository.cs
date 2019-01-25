@@ -10,5 +10,7 @@ namespace RestWithAspNetCoreUdemy.Repository.Generic
         void Delete(long id);
         T FindById(long id);
         List<T> FindAll();
+        List<T> FindWithPagedSearch(string query);
+        int GetCount(string query);
     }
 }

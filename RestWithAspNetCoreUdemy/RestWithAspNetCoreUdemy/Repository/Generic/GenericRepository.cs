@@ -9,7 +9,7 @@ namespace RestWithAspNetCoreUdemy.Repository.Generic
 {
     public class GenericRepository<T> : IRepository<T> where T : BaseEntity
     {
-        private readonly MysqlContext _context;
+        protected readonly MysqlContext _context;
         private DbSet<T> _dataSet;
 
         public GenericRepository(MysqlContext context)
@@ -49,14 +49,25 @@ namespace RestWithAspNetCoreUdemy.Repository.Generic
             }
         }
 
-        public List<T> FindAll()
-        {
-            return _dataSet.ToList();
-        }
+        public List<T> FindAll() => _dataSet.ToList();
 
-        public T FindById(long id)
+        public T FindById(long id) => _dataSet.Find(id);
+
+        public List<T> FindWithPagedSearch(string query) => _dataSet.FromSql<T>(query).ToList();
+
+        public int GetCount(string query)
         {
-            return _dataSet.Find(id);
+            var result = "";
+            using (var connection = _context.Database.GetDbConnection())
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = query;
+                    result = command.ExecuteScalar().ToString();
+                }
+            }
+            return int.Parse(result);
         }
 
         public T Update(T entity)

@@ -83,9 +83,11 @@ namespace RestWithAspNetCoreUdemy
 
             services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUserRepository, UserRepositoryImp>();
+            services.AddScoped<IPersonRepository, PersonRepository>();
             services.AddScoped<IPersonBussines, PersonBussinesImp>();
             services.AddScoped<IBookBussines, BookBussinesImp>();
             services.AddScoped<ILoginBussines, LoginBussinesImp>();
+            services.AddScoped<IFileBussines, FileBussinesImp>();
 
             services.AddApiVersioning(options => options.ReportApiVersions = true);
 
