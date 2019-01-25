@@ -69,6 +69,19 @@ namespace RestWithAspNetCoreUdemy.Repository
             return Ok(personUpdate);
         }
 
+        [HttpPatch()]
+        [Authorize("Bearer")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        public ActionResult Patch([FromBody] PersonVO person)
+        {
+            if (person == null) BadRequest();
+            var personUpdate = _personBussines.Update(person);
+            if (personUpdate == null) BadRequest();
+            return Ok(personUpdate);
+        }
+
         // DELETE api/persons/5
         [HttpDelete("{id}")]
         [Authorize("Bearer")]
