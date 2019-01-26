@@ -132,12 +132,7 @@ namespace RestWithAspNetCoreUdemy
             app.UseRewriter(option);
 
             app.UseHttpsRedirection();
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "DefaultApi", 
-                    template: "{controller=Values}/{id?}");
-            });
+            app.UseMvc();
         }
 
         private void ExecuteMigrations(string connectionString)

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RestWithAspNetCoreUdemy.Bussines;
 using RestWithAspNetCoreUdemy.Data.VO;
 using RestWithAspNetCoreUdemy.DTO;
+using RestWithAspNetCoreUdemy.HyperMedia;
 using System.Collections.Generic;
 
 namespace RestWithAspNetCoreUdemy.Repository
@@ -20,32 +21,33 @@ namespace RestWithAspNetCoreUdemy.Repository
         }
 
         // GET api/persons
-        [HttpGet]
+        [HttpGet(Name = "GetAll")]
         [Authorize("Bearer")]
         [ProducesResponseType(200, Type = typeof(List<PersonVO>))]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
-        public ActionResult Get()
+        public ActionResult GetAll()
         {
-            return Ok(_personBussines.FindAll());
+            List<PersonVO> persons = _personBussines.FindAll();
+            return Ok(PersonLink.CreateLinksPersonVO(persons, this.Url));
         }
 
         // GET api/persons/5
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetPerson")]
         [Authorize("Bearer")]
         [ProducesResponseType(200, Type = typeof(PersonVO))]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]       
-        public ActionResult Get(int id)
+        public ActionResult GetById(int id)
         {
             PersonVO person = _personBussines.FindById(id);
             if (person == null) return NotFound();
-            return Ok(person);
+            return Ok(PersonLink.CreateLinksPersonVO(person, this.Url));
         }
 
         // GET api/persons/find-by-name?firstName=teste&lastName=teste
-        [HttpGet("find-by-name")]
+        [HttpGet("find-by-name", Name = "GetByName")]
         [Authorize("Bearer")]
         [ProducesResponseType(200, Type = typeof(PersonVO))]
         [ProducesResponseType(400)]
@@ -57,7 +59,7 @@ namespace RestWithAspNetCoreUdemy.Repository
         }
 
         // GET api/persons/find-with-paged-search/asc/10/1?name=Teste
-        [HttpGet("find-with-paged-search/{sortDirection}/{pageSize}/{page}")]
+        [HttpGet("find-with-paged-search/{sortDirection}/{pageSize}/{page}", Name = "GetWithPagedSearch")]
         [Authorize("Bearer")]
         [ProducesResponseType(200, Type = typeof(PagedSearchDTO<PersonVO>))]
         [ProducesResponseType(400)]
@@ -69,37 +71,37 @@ namespace RestWithAspNetCoreUdemy.Repository
         }
 
         // POST api/persons
-        [HttpPost]
+        [HttpPost(Name = "CreatePerson")]
         [Authorize("Bearer")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
-        public ActionResult Post([FromBody] PersonVO person)
+        public ActionResult Create([FromBody] PersonVO person)
         {
             if (person == null) BadRequest();
-            return Ok(_personBussines.Create(person));
+            return Ok(PersonLink.CreateLinksPersonVO(_personBussines.Create(person), this.Url));
         }
 
         // PUT api/persons/5
-        [HttpPut()]
+        [HttpPut("{id}", Name = "UpdatePerson")]
         [Authorize("Bearer")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
-        public ActionResult Put([FromBody] PersonVO person)
+        public ActionResult Update(int id, [FromBody] PersonVO person)
         {
             if (person == null) BadRequest();
             var personUpdate = _personBussines.Update(person);
             if (personUpdate == null) BadRequest();
-            return Ok(personUpdate);
+            return Ok(PersonLink.CreateLinksPersonVO(personUpdate, this.Url));
         }
 
-        [HttpPatch()]
+        [HttpPatch("{id}", Name = "PartialUpdatePerson")]
         [Authorize("Bearer")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
-        public ActionResult Patch([FromBody] PersonVO person)
+        public ActionResult UpdatePartial(int id, [FromBody] PersonVO person)
         {
             if (person == null) BadRequest();
             var personUpdate = _personBussines.Update(person);
@@ -108,7 +110,7 @@ namespace RestWithAspNetCoreUdemy.Repository
         }
 
         // DELETE api/persons/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name = "DeletePerson")]
         [Authorize("Bearer")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
