@@ -1,7 +1,9 @@
 ﻿using RestWithAspNetCoreUdemy.Models.Base;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RestWithAspNetCoreUdemy.Models
 {
+    [Table("persons")]
     public class Person : BaseEntity
     {
         public string FirstName { get; set; }

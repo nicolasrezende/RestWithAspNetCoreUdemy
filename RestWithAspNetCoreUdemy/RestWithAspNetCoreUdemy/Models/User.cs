@@ -1,5 +1,8 @@
-﻿namespace RestWithAspNetCoreUdemy.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace RestWithAspNetCoreUdemy.Models
 {
+    [Table("users")]
     public class User
     {
         public int Id { get; set; }
