@@ -1,0 +1,15 @@
+docker-compose up -d --build
+	docker-compose: executa o arquivo docker-compose.yml
+	up: inicializar
+	-d: irá inicializar detaxado, ou seja, irá liberar o terminal para uso depois que executar
+	--build: opcional, irá refazer o build do projeto
+	
+winpty docker exec -it CONTAINER_ID bash
+	irá acessar o terminal do container
+	winpty: necessário somente para usuários Windows
+	
+docker rmi $(docker images -q) -f
+	remove todas as imagens baixadas
+	
+docker rm $(docker ps -a -q) -f
+	remove todos os containers
